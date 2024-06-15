@@ -11,7 +11,6 @@ from models.utils import (compute_pose_error, compute_epipolar_error,
                           scale_intrinsics)
 import torch
 from scipy.spatial import ConvexHull
-import time
 from shapely.geometry import Polygon
 
 WIDTH = 1920

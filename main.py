@@ -2,7 +2,6 @@ import argparse
 import os
 import numpy as np
 import glob
-import cv2
 import time
 
 from utils import create_folder, get_frame, gen_points, create_points_dict, plot_overlap_for_all_camera, get_overlap_for_camera, reconstruct_points
@@ -14,7 +13,6 @@ NEW_HEIGHT = 480
 
 
 def run_one_video_folder(opt, video_folder):
-    # video_folder = opt.video_folder
     frame_folder = os.path.join(video_folder, 'frames')
     points_folder = os.path.join(frame_folder, 'points')
     get_frame(video_folder, frame_folder)
@@ -32,8 +30,6 @@ def run_one_video_folder(opt, video_folder):
         plot_overlap_for_all_camera(frame_subfolder, points_dict)
         for key in sorted(list(points_dict.keys())):
             coor_list = get_overlap_for_camera(points_dict[key])
-            # print('key', key)
-            # print('coor', coor_list.shape)
             npz_file_path = os.path.join(frame_subfolder, key + '_coor_list')
             np.savez(npz_file_path, coor_list, t)
     
@@ -42,12 +38,10 @@ def run_one_video_folder(opt, video_folder):
         img_paths = sorted(img_paths)
         npz_paths = glob.glob(os.path.join(frame_subfolder, '*.npz'))
         npz_paths = sorted(npz_paths)
-        # print(img_paths)
-        # print(npz_paths)
         for img_path, npz_path in zip(img_paths, npz_paths):
             reconstruct_points(img_path, npz_path)
 
-    print('Done for', video_folder)
+    print(f'Done for {video_folder}\n')
 
 
 def write_txt(test_video_folder, team_folder):
@@ -73,13 +67,6 @@ def write_txt(test_video_folder, team_folder):
                     f.write(frame_name + ', \n')
                     f.write('(' + ','.join(coor) + '), ' + str(1.0/t))
                     f.write('\n')
-
-                    # f.close()
-
-
-    # frame_subfolders = glob.glob(os.path.join(frame_folder, '*'))
-    # frame_subfolders = sorted(frame_subfolders)
-
 
 
 if __name__ == '__main__':
@@ -150,15 +137,14 @@ if __name__ == '__main__':
         help='Shuffle ordering of pairs before processing')
 
     opt = parser.parse_args()
-    # print(opt)
 
-    test_video_folder = 'data_btc/Private_Test (another copy)'
+    test_video_folder = 'data_btc/Private_Test'
     video_subfolders = glob.glob(os.path.join(test_video_folder, 'videos/*'))
     video_subfolders = sorted(video_subfolders)
     for video_subfolder in video_subfolders:
         run_one_video_folder(opt, video_subfolder)
 
-    # write_txt(test_video_folder, 'Next Gen AI 2')
+    write_txt(test_video_folder, 'Next Gen AI')
     
 
     # frame_subfolder = 'data_btc/Public_Test (copy)/videos/scene4cam_01/frames/9'
